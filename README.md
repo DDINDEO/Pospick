@@ -47,7 +47,8 @@
 
 ## 🏗 시스템 구조
 
-<img width="620" height="637" alt="image" src="https://github.com/user-attachments/assets/ad8f291f-7f59-4d44-8902-0c34700a9e36" />
+<img width="598" height="619" alt="image" src="https://github.com/user-attachments/assets/e0b5fdff-dc4a-4d13-a39f-ed6a3da95838" />
+
 
 
 ---
