@@ -62,6 +62,15 @@
 
 ---
 
+## ERD
+
+
+<img width="1331" height="504" alt="image" src="https://github.com/user-attachments/assets/7b1c9d1c-c3e0-4d9a-a28c-5b317a3e855e" />
+
+
+
+---
+
 ## 🛠 기술 스택 (Tech Stack)
 * **Backend**: Java, Spring Boot, Spring Data JPA, Spring Security
 * **Frontend**: React, TypeScript, Tailwind CSS
