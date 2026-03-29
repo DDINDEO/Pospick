@@ -66,7 +66,7 @@
 
 
 
-<img width="2190" height="687" alt="image" src="https://github.com/user-attachments/assets/88ede19d-cde8-4222-8055-f433a140abb9" />
+<img width="2204" height="609" alt="image" src="https://github.com/user-attachments/assets/2ea6b439-4ee9-464c-b347-f422d55bc18f" />
 
 
 
@@ -77,7 +77,7 @@
 * **Frontend**: React, TypeScript, Tailwind CSS
 * **Database**: MySQL
 * **AI API**: Google Gemini API
-* **Storage**: Local File System (추후 S3 확장 가능 구조) (추후 무엇을 사용할지 결정)
+* **Storage**: AWS S3
 ---
 
 ## 🆚 기존 POS 앱과 차별점
@@ -117,7 +117,8 @@
 
 ### 🤖 Phase 3: AI 상품 관리 및 스토리지 (Week 6 - 8)
 - [ ] **6주차: 이미지 업로드 시스템**
-  - [ ] `StorageService` 인터페이스 설계 및 로컬 파일 저장 구현
+  - [ ] AWS S3 버킷 생성 및 Access Key 발급
+  - [ ] `StorageService` 인터페이스 설계 및 S3 업로드/삭제 서비스 구현 (StorageService)
   - [ ] 상품 이미지 업로드 및 조회 API 연동
 - [ ] **7주차: Gemini AI 자동 분류 엔진**
   - [ ] 상품 정보를 Gemini API에 전달하는 서비스 모듈 구현
