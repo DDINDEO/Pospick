@@ -1,5 +1,6 @@
 package com.pospick.pospick.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * 전역 예외 처리 핸들러
  * 어디서든 예외가 발생하면 여기서 잡아서 일관된 형식으로 응답 반환
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -17,6 +19,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+        log.warn("CustomException: {}", e.getMessage());
         return ResponseEntity
                 .status(e.getStatus())
                 .body(new ErrorResponse(e.getStatus().value(), e.getMessage()));
@@ -28,6 +31,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error("Unhandled Exception: ", e); // 에러 전체 스택 출력
         return ResponseEntity
                 .internalServerError()
                 .body(new ErrorResponse(500, "서버 내부 오류가 발생했습니다."));
