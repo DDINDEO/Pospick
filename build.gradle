@@ -28,6 +28,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -38,4 +41,9 @@ compileOnly 'org.projectlombok:lombok'
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// Jackson이 생성자/Record 파라미터 이름을 런타임에 읽을 수 있도록 설정
+tasks.withType(JavaCompile).configureEach {
+	options.compilerArgs.add('-parameters')
 }

@@ -6,6 +6,7 @@ import com.pospick.pospick.dto.request.auth.SignupRequest;
 import com.pospick.pospick.dto.response.auth.LoginResponse;
 import com.pospick.pospick.exception.CustomException;
 import com.pospick.pospick.repository.UserRepository;
+import com.pospick.pospick.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // 비밀번호 암호화/검증
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 회원가입
@@ -31,38 +33,39 @@ public class AuthService {
     @Transactional
     public void signup(SignupRequest request) {
         // loginId 중복 확인
-        if (userRepository.existsByLoginId(request.getLoginId())) {
+        if (userRepository.existsByLoginId(request.loginId())) {
             throw new CustomException(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다.");
         }
 
         // 유저 엔티티 생성 및 비밀번호 암호화
         User user = new User();
-        user.setLoginId(request.getLoginId());
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // 암호화
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setRole(request.getRole());
+        user.setLoginId(request.loginId());
+        user.setPassword(passwordEncoder.encode(request.password())); // 암호화
+        user.setName(request.name());
+        user.setEmail(request.email());
+        user.setRole(request.role());
 
         userRepository.save(user);
     }
 
     /**
      * 로그인
-     * - loginId로 유저 조회
-     * - 비밀번호 일치 여부 확인
-     * - 유저 정보 반환 (TODO: 3주차에 JWT 토큰 반환으로 업그레이드)
+     * - loginId/password 검증
+     * - JWT 토큰 발급하여 반환
      */
     public LoginResponse login(LoginRequest request) {
         // loginId로 유저 조회 (없으면 401 에러)
-        User user = userRepository.findByLoginId(request.getLoginId())
+        User user = userRepository.findByLoginId(request.loginId())
                 .orElseThrow(() -> new CustomException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."));
 
         // 비밀번호 일치 여부 확인
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new CustomException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다.");
         }
 
-        // TODO: 3주차 - token 자리에 JWT 토큰 넣을 예정 (현재 null)
-        return new LoginResponse(user.getUserId(), user.getName(), user.getRole(), null);
+        // JWT 토큰 발급
+        String token = jwtTokenProvider.generateToken(user.getLoginId(), user.getRole());
+
+        return new LoginResponse(user.getUserId(), user.getName(), user.getRole(), token);
     }
 }

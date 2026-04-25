@@ -12,3 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+jwt:
+  secret: pospick-secret-key-must-be-at-least-32-characters-long
+  expiration: 86400000 # 24시간 (밀리초)

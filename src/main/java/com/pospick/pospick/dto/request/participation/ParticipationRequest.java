@@ -1,8 +1,8 @@
 package com.pospick.pospick.dto.request.participation;
 
-import lombok.Getter;
-
-@Getter
-public class ParticipationRequest {
-    private Long eventId;
-}
+/**
+ * 행사 참가 신청 요청 DTO
+ */
+public record ParticipationRequest(
+        Long eventId
+) {}

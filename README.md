@@ -97,15 +97,15 @@
 ## 📅 개발 로드맵 (12 Weeks)
 
 ### 🏗️ Phase 1: 환경 설정 및 핵심 도메인 설계 (Week 1 - 3)
-- [ ] **1주차: 프로젝트 뼈대 및 DB 설계**
-  - [ ] 핵심 엔티티 정의 및 MySQL ERD 설계 (User, Event, Product 관계)
-  - [ ] Spring Boot & React 기본 프로젝트 생성 및 DB 연결 확인
-- [ ] **2주차: 회원 및 행사 기본 CRUD**
-  - [ ] 회원가입 / 로그인 기본 로직 (API 동작 중심)
-  - [ ] 주최측(Organizer): 행사 생성 및 조회 기능 구현
-- [ ] **3주차: 인증 시스템 도입 (Spring Security)**
-  - [ ] JWT를 이용한 로그인 기능 및 토큰 관리 구현
-  - [ ] Organizer / Seller 권한 분리 및 접근 제어 적용
+- [x] **1주차: 프로젝트 뼈대 및 DB 설계**
+  - [x] 핵심 엔티티 정의 및 MySQL ERD 설계 (User, Event, Product 관계)
+  - [x] Spring Boot & React 기본 프로젝트 생성 및 DB 연결 확인
+- [x] **2주차: 회원 및 행사 기본 CRUD**
+  - [x] 회원가입 / 로그인 기본 로직 (API 동작 중심)
+  - [x] 주최측(Organizer): 행사 생성 및 조회 기능 구현
+- [x] **3주차: 인증 시스템 도입 (Spring Security)**
+  - [x] JWT를 이용한 로그인 기능 및 토큰 관리 구현
+  - [x] Organizer / Seller 권한 분리 및 접근 제어 적용
 
 ### 🤝 Phase 2: 참가 신청 및 서비스 흐름 연결 (Week 4 - 5)
 - [ ] **4주차: 행사 참가 프로세스**
