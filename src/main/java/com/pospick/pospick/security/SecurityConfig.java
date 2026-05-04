@@ -47,8 +47,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/**").permitAll()
                 // 행사 생성/수정/삭제(POST/PUT/DELETE)는 ORGANIZER만
                 .requestMatchers("/api/events/**").hasRole("ORGANIZER")
-                // 참가 신청은 SELLER만
-                .requestMatchers("/api/participations/**").hasAnyRole("ORGANIZER", "SELLER")
+                // 참가 신청은 ORGANIZER / SELLER 모두 가능
+                .requestMatchers("/api/participations", "/api/participations/**").hasAnyRole("ORGANIZER", "SELLER")
                 // 상품/주문은 SELLER만
                 .requestMatchers("/api/products/**").hasRole("SELLER")
                 .requestMatchers("/api/orders/**").hasRole("SELLER")

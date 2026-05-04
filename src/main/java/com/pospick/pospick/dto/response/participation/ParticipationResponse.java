@@ -1,13 +1,30 @@
 package com.pospick.pospick.dto.response.participation;
 
-import lombok.AllArgsConstructor;
+import com.pospick.pospick.domain.Participation;
 import lombok.Getter;
 
+/**
+ * 참가 신청 응답 DTO
+ * - partId: 참가 신청 ID
+ * - eventId: 행사 ID
+ * - sellerName: 신청한 판매자 이름
+ * - status: 신청 상태 (PENDING / APPROVED / REJECTED)
+ */
 @Getter
-@AllArgsConstructor
 public class ParticipationResponse {
-    private Long partId;
-    private Long eventId;
-    private String sellerName;
-    private String status; // PENDING, APPROVED, REJECTED
+
+    private final Long partId;
+    private final Long eventId;
+    private final String sellerName;
+    private final String status;
+
+    /**
+     * Participation 엔티티로부터 응답 DTO 생성
+     */
+    public ParticipationResponse(Participation participation) {
+        this.partId = participation.getPartId();
+        this.eventId = participation.getEvent().getEventId();
+        this.sellerName = participation.getSeller().getName();
+        this.status = participation.getStatus();
+    }
 }
