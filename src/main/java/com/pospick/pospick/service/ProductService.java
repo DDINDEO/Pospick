@@ -3,6 +3,7 @@ package com.pospick.pospick.service;
 import com.pospick.pospick.domain.Participation;
 import com.pospick.pospick.domain.Product;
 import com.pospick.pospick.dto.request.product.ProductCreateRequest;
+import com.pospick.pospick.dto.response.product.CategoryClassifyResponse;
 import com.pospick.pospick.dto.response.product.ProductResponse;
 import com.pospick.pospick.exception.CustomException;
 import com.pospick.pospick.repository.ParticipationRepository;
@@ -26,6 +27,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ParticipationRepository participationRepository;
     private final S3Service s3Service;
+    private final GeminiService geminiService; // AI 카테고리 분류 서비스
 
     /**
      * 상품 등록
@@ -35,6 +37,9 @@ public class ProductService {
      */
     @Transactional
     public ProductResponse createProduct(ProductCreateRequest request) {
+
+        CategoryClassifyResponse category = geminiService.classify(request.name()); //gemini 분류
+
         // 참가 신청 조회 (부스 확인)
         Participation participation = participationRepository.findById(request.partId())
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 참가 신청입니다."));
@@ -51,6 +56,7 @@ public class ProductService {
         product.setPrice(request.price());
         product.setStockQuantity(request.stockQuantity());
         product.setImageUrl(request.imageUrl());
+        product.setAiCategory(category.getMainCategory() + " > " + category.getSubCategory()); //gemini 카테고리 분류 생성
 
         return new ProductResponse(productRepository.save(product));
     }

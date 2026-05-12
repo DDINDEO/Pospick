@@ -23,8 +23,10 @@ public class JwtTokenProvider {
     private final long expirationMs;
 
     public JwtTokenProvider(
+            // application.yaml의 jwt.secret, jwt.expiration 값을 자동으로 주입받음
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.expiration}") long expirationMs) {
+        // 문자열 비밀키 → 암호화에 사용하는 SecretKey 객체로 변환
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationMs = expirationMs;
     }
@@ -72,12 +74,16 @@ public class JwtTokenProvider {
         }
     }
 
-    // 토큰을 파싱해서 Claims(내부 데이터) 추출
+    /**
+     * 토큰을 파싱해서 Claims(내부 데이터) 추출
+     * Claims = 토큰 안에 담긴 정보 묶음 (loginId, role, 발급시간, 만료시간 등)
+     * 서명 검증 실패(변조) or 만료 시 JwtException 발생
+     */
     private Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(key)
+                .verifyWith(key)           // 서명 검증에 사용할 키 설정
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseSignedClaims(token)  // 토큰 파싱 + 서명 검증
+                .getPayload();             // Claims 데이터 꺼내기
     }
 }

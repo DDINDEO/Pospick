@@ -12,15 +12,16 @@ import java.time.LocalDate;
 @Getter
 public class EventResponse {
     private Long eventId;
-    private String organizerName; // 주최자 이름
+    private String organizerName;
     private String title;
     private String description;
     private String location;
     private LocalDate startDate;
     private LocalDate endDate;
     private String posterUrl;
+    private boolean collectSales;
+    private boolean collectStock;
 
-    // Event 엔티티를 받아서 DTO로 변환하는 생성자
     public EventResponse(Event event) {
         this.eventId = event.getEventId();
         this.organizerName = event.getOrganizer().getName();
@@ -30,5 +31,7 @@ public class EventResponse {
         this.startDate = event.getStartDate();
         this.endDate = event.getEndDate();
         this.posterUrl = event.getPosterUrl();
+        this.collectSales = event.isCollectSales();
+        this.collectStock = event.isCollectStock();
     }
 }

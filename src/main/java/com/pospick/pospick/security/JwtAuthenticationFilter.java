@@ -55,12 +55,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String role = jwtTokenProvider.getRole(token);
 
                 // 4. 인증 정보 생성 후 SecurityContext에 저장
+                // UsernamePasswordAuthenticationToken(사용자식별자, 비밀번호, 권한목록)
+                // - 비밀번호는 JWT 방식에서 불필요하므로 null
+                // - Spring Security는 권한 앞에 "ROLE_" 붙는 걸 기본 규칙으로 사용
+                //   예: SELLER → ROLE_SELLER, SecurityConfig의 hasRole("SELLER")와 매칭됨
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
-                                loginId,
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                                loginId,                                          // principal (누구인지)
+                                null,                                             // credentials (비밀번호, JWT에선 불필요)
+                                List.of(new SimpleGrantedAuthority("ROLE_" + role)) // 권한
                         );
+                // SecurityContextHolder = 현재 요청의 인증 정보를 저장하는 공간
+                // 이후 Controller에서 @AuthenticationPrincipal로 loginId 꺼낼 수 있음
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } else {
                 // 토큰이 있는데 유효하지 않은 경우 (만료/변조)

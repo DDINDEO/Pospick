@@ -59,6 +59,8 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."));
 
         // 비밀번호 일치 여부 확인
+        // BCrypt는 같은 비밀번호라도 암호화할 때마다 다른 문자열이 나옴
+        // → 직접 비교 불가, matches()로 원문과 암호화된 값을 비교해야 함
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new CustomException(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다.");
         }

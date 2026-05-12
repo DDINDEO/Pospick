@@ -55,7 +55,8 @@ public class SecurityConfig {
                 // 나머지는 로그인 필요
                 .anyRequest().authenticated()
             )
-            // JWT 필터를 Spring Security 필터 앞에 등록
+            // JWT 필터를 Spring Security 기본 로그인 필터 앞에 끼워 넣음
+            // → 요청이 들어오면 JWT 검증을 먼저 하고, 그 다음 권한 체크로 넘어감
             .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                     UsernamePasswordAuthenticationFilter.class);
 
