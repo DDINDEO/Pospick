@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### 민감한 설정 파일 (AWS 키 등) ###
+src/main/resources/application-local.yaml

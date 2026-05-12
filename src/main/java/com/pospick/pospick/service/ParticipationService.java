@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -51,11 +52,25 @@ public class ParticipationService {
             throw new CustomException(HttpStatus.CONFLICT, "이미 신청한 행사입니다.");
         }
 
+        // 행사의 수집 옵션을 확인해서 동의 여부 검증
+        // 행사가 매출 수집을 요구하는데 SELLER가 동의 안 했으면 신청 불가
+        if (event.isCollectSales() && !request.collectSalesAgree()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "이 행사는 매출 데이터 수집 동의가 필요합니다.");
+        }
+        if (event.isCollectStock() && !request.collectStockAgree()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "이 행사는 재고 데이터 수집 동의가 필요합니다.");
+        }
+
         // 참가 신청 생성 (PENDING 상태)
         Participation participation = new Participation();
         participation.setEvent(event);
         participation.setSeller(seller);
         participation.setStatus("PENDING");
+
+        // 수집 동의 여부 및 동의 시각 저장
+        participation.setCollectSalesAgree(request.collectSalesAgree());
+        participation.setCollectStockAgree(request.collectStockAgree());
+        participation.setAgreedAt(LocalDateTime.now()); // 동의한 시각 기록
 
         return new ParticipationResponse(participationRepository.save(participation));
     }
@@ -110,6 +125,9 @@ public class ParticipationService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 행사입니다."));
 
+        // stream() → 리스트를 순회
+        // map(ParticipationResponse::new) → 각 Participation을 ParticipationResponse로 변환
+        // toList() → 다시 리스트로 모음
         return participationRepository.findByEvent(event).stream()
                 .map(ParticipationResponse::new)
                 .toList();

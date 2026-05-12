@@ -16,3 +16,10 @@ spring:
 jwt:
   secret: pospick-secret-key-must-be-at-least-32-characters-long
   expiration: 86400000 # 24시간 (밀리초)
+
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY}
+    secret-key: ${AWS_SECRET_KEY}
+    region: ap-northeast-2
+    bucket: pospick-images

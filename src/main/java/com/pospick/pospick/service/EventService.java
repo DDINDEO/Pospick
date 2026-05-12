@@ -43,6 +43,10 @@ public class EventService {
         event.setEndDate(request.endDate());
         event.setPosterUrl(request.posterUrl());
 
+        // 수집 옵션 저장 - ORGANIZER가 설정한 매출/재고 수집 여부
+        event.setCollectSales(request.collectSales());
+        event.setCollectStock(request.collectStock());
+
         return new EventResponse(eventRepository.save(event));
     }
 

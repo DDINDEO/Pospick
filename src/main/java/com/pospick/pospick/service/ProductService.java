@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ParticipationRepository participationRepository;
+    private final S3Service s3Service;
 
     /**
      * 상품 등록
@@ -91,6 +93,7 @@ public class ProductService {
 
     /**
      * 상품 삭제
+     * - 상품 삭제 시 S3에 저장된 이미지도 함께 삭제
      *
      * @param prodId 삭제할 상품 ID
      */
@@ -99,6 +102,32 @@ public class ProductService {
         Product product = productRepository.findById(prodId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."));
 
+        // S3에 이미지가 있으면 함께 삭제
+        s3Service.delete(product.getImageUrl());
+
         productRepository.delete(product);
+    }
+
+    /**
+     * 상품 이미지 업로드
+     * - 이미지를 S3에 업로드하고 상품의 imageUrl 업데이트
+     *
+     * @param prodId 이미지를 등록할 상품 ID
+     * @param file   업로드할 이미지 파일
+     * @return 업데이트된 상품 정보
+     */
+    @Transactional
+    public ProductResponse uploadImage(Long prodId, MultipartFile file) {
+        Product product = productRepository.findById(prodId)
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."));
+
+        // 기존 이미지가 있으면 S3에서 먼저 삭제
+        s3Service.delete(product.getImageUrl());
+
+        // 새 이미지 S3 업로드 후 URL 저장
+        String imageUrl = s3Service.upload(file);
+        product.setImageUrl(imageUrl);
+
+        return new ProductResponse(product);
     }
 }

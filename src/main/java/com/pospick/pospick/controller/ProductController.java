@@ -6,6 +6,7 @@ import com.pospick.pospick.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -58,5 +59,18 @@ public class ProductController {
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("상품이 삭제되었습니다.");
+    }
+
+    /**
+     * 상품 이미지 업로드 (SELLER 전용)
+     * POST /api/products/{id}/image
+     * 요청: multipart/form-data — 파라미터명 "file"
+     * 응답: 업데이트된 상품 정보 (imageUrl 포함)
+     */
+    @PostMapping("/{id}/image")
+    public ResponseEntity<ProductResponse> uploadImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(productService.uploadImage(id, file));
     }
 }

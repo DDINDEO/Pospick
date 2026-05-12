@@ -26,4 +26,9 @@ public class Event {
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // 수집 옵션 - ORGANIZER가 행사 생성 시 설정
+    // true면 해당 데이터를 수집하겠다는 의미
+    private boolean collectSales = false;  // 매출 데이터 수집 여부
+    private boolean collectStock = false;  // 재고 데이터 수집 여부
 }
