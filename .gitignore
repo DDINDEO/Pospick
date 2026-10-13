@@ -38,3 +38,9 @@ out/
 
 ### 민감한 설정 파일 (AWS 키 등) ###
 src/main/resources/application-local.yaml
+
+### Claude Code ###
+.claude/
+
+### 불필요한 경로 ###
+C/
