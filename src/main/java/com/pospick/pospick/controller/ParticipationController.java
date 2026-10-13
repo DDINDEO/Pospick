@@ -60,4 +60,15 @@ public class ParticipationController {
             @RequestParam Long eventId) {
         return ResponseEntity.ok(participationService.getParticipations(eventId));
     }
+
+    /**
+     * 내가 신청한 행사 목록 조회 (SELLER 마이페이지)
+     * GET /api/participations/my
+     * JWT 토큰에서 loginId 자동 추출 → 내 신청 목록 반환
+     */
+    @GetMapping("/my")
+    public ResponseEntity<List<ParticipationResponse>> getMyParticipations(
+            @AuthenticationPrincipal String loginId) {
+        return ResponseEntity.ok(participationService.getMyParticipations(loginId));
+    }
 }

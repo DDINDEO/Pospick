@@ -5,6 +5,7 @@ import com.pospick.pospick.dto.response.event.EventResponse;
 import com.pospick.pospick.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,10 +25,15 @@ public class EventController {
      * 행사 생성
      * POST /api/events
      * 요청 바디: EventCreateRequest (제목, 날짜, 장소 등)
+     * @AuthenticationPrincipal → JWT 필터가 SecurityContext에 저장한 loginId를 자동으로 주입
+     * → 요청 바디에 organizerId를 넣지 않아도 로그인한 사용자가 자동으로 주최자가 됨
      */
     @PostMapping
-    public ResponseEntity<EventResponse> createEvent(@RequestBody EventCreateRequest request) {
-        return ResponseEntity.ok(eventService.createEvent(request));
+    public ResponseEntity<EventResponse> createEvent(
+            @RequestBody EventCreateRequest request,
+            @AuthenticationPrincipal String loginId  // JWT 토큰에서 추출한 로그인 ID
+    ) {
+        return ResponseEntity.ok(eventService.createEvent(request, loginId));
     }
 
     /**
@@ -47,5 +53,25 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<EventResponse> getEvent(@PathVariable Long eventId) {
         return ResponseEntity.ok(eventService.getEvent(eventId));
+    }
+
+    /**
+     * 내가 만든 행사 목록 조회 (ORGANIZER 마이페이지)
+     * GET /api/events/my
+     */
+    @GetMapping("/my")
+    public ResponseEntity<List<EventResponse>> getMyEvents(
+            @AuthenticationPrincipal String loginId) {
+        return ResponseEntity.ok(eventService.getMyEvents(loginId));
+    }
+
+    /**
+     * 행사 삭제 (ORGANIZER 전용)
+     * DELETE /api/events/{eventId}
+     */
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<String> deleteEvent(@PathVariable Long eventId) {
+        eventService.deleteEvent(eventId);
+        return ResponseEntity.ok("행사가 삭제됐습니다.");
     }
 }

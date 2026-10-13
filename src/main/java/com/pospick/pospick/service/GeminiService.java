@@ -64,7 +64,7 @@ public class GeminiService {
             );
 
             // 응답 텍스트에서 JSON 파싱
-            String text = response.text().trim();
+            String text = response.text().trim(); //ai답변 택스트
             log.info("Gemini 원본 응답: {}", text); // 디버그용
 
             // 혹시 마크다운 코드블록(```json ... ```)으로 감싸져 있으면 제거

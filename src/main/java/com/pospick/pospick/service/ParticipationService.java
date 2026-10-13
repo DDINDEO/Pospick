@@ -125,10 +125,25 @@ public class ParticipationService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 행사입니다."));
 
-        // stream() → 리스트를 순회
-        // map(ParticipationResponse::new) → 각 Participation을 ParticipationResponse로 변환
-        // toList() → 다시 리스트로 모음
         return participationRepository.findByEvent(event).stream()
+                .map(ParticipationResponse::new)
+                .toList();
+    }
+
+    /**
+     * 내가 신청한 행사 목록 조회 (SELLER 마이페이지)
+     * - JWT 토큰의 loginId로 내 신청 목록 반환
+     * - 상태(PENDING/APPROVED/REJECTED)도 함께 반환
+     *
+     * @param loginId JWT 토큰에서 추출한 로그인 ID
+     */
+    public List<ParticipationResponse> getMyParticipations(String loginId) {
+        // loginId로 판매자 조회
+        User seller = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."));
+
+        // 내가 신청한 모든 참가 신청 목록 반환
+        return participationRepository.findBySeller(seller).stream()
                 .map(ParticipationResponse::new)
                 .toList();
     }

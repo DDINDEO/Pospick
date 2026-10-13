@@ -1,16 +1,31 @@
 package com.pospick.pospick.dto.response.order;
 
-import lombok.AllArgsConstructor;
+import com.pospick.pospick.domain.Order;
 import lombok.Getter;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
-@AllArgsConstructor
 public class OrderResponse {
-    private Long orderId;
-    private int totalPrice;
-    private int receivedAmount;
-    private int change; // 거스름돈
-    private String paymentMethod;
-    private LocalDateTime createdAt;
+
+    private final Long orderId;
+    private final Long partId;
+    private final int totalPrice;
+    private final String paymentMethod;
+    private final int receivedAmount;
+    private final int changeAmount;       // 거스름돈 = receivedAmount - totalPrice
+    private final LocalDateTime createdAt;
+    private final List<OrderItemResponse> items;
+
+    public OrderResponse(Order order, List<OrderItemResponse> items) {
+        this.orderId = order.getOrderId();
+        this.partId = order.getParticipation().getPartId();
+        this.totalPrice = order.getTotalPrice();
+        this.paymentMethod = order.getPaymentMethod();
+        this.receivedAmount = order.getReceivedAmount();
+        this.changeAmount = order.getReceivedAmount() - order.getTotalPrice(); // 거스름돈 자동 계산
+        this.createdAt = order.getCreatedAt();
+        this.items = items;
+    }
 }

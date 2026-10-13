@@ -29,7 +29,7 @@ public class S3Service {
     private final S3Client s3Client;
     private final String bucket;
 
-    public S3Service(
+    public S3Service( // 키를 읽어옴
             @Value("${aws.s3.access-key}") String accessKey,
             @Value("${aws.s3.secret-key}") String secretKey,
             @Value("${aws.s3.region}") String region,
@@ -99,7 +99,7 @@ public class S3Service {
      * @param imageUrl 삭제할 이미지 URL
      */
     public void delete(String imageUrl) {
-        if (imageUrl == null || imageUrl.isBlank()) return;
+        if (imageUrl == null || imageUrl.isBlank()) return; //사진이 없으면 그냥 넘어감
 
         // URL에서 S3 키 추출
         // https://버킷.s3.리전.amazonaws.com/products/uuid.png → products/uuid.png

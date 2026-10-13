@@ -22,7 +22,7 @@ public class Participation {
     private User seller; // 판매자
 
     private String status; // PENDING, APPROVED, REJECTED
-    private boolean collectSalesAgree = false;
-    private boolean collectStockAgree = false;
+    private boolean collectSalesAgree = false; //판매 수집 동의
+    private boolean collectStockAgree = false; //재고 수집 동의
     private LocalDateTime agreedAt;
 }
