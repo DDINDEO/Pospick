@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class EventService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
+    private final S3Service s3Service;
 
     /**
      * 행사 생성
@@ -80,9 +82,14 @@ public class EventService {
      * @param eventId 삭제할 행사 ID
      */
     @Transactional
-    public void deleteEvent(Long eventId) {
+    public void deleteEvent(Long eventId, String loginId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 행사입니다."));
+
+        // 본인 행사인지 확인
+        if (!event.getOrganizer().getLoginId().equals(loginId)) {
+            throw new CustomException(HttpStatus.FORBIDDEN, "본인이 만든 행사만 삭제할 수 있습니다.");
+        }
 
         // 이 행사에 연결된 참가 신청 목록 조회
         List<com.pospick.pospick.domain.Participation> participations =
@@ -115,13 +122,22 @@ public class EventService {
      * @param loginId JWT 토큰에서 추출한 로그인 ID
      */
     public List<EventResponse> getMyEvents(String loginId) {
-        // loginId로 주최자 조회
         User organizer = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."));
-
-        // 내가 만든 행사 목록 반환
         return eventRepository.findByOrganizer(organizer).stream()
                 .map(EventResponse::new)
                 .toList();
+    }
+
+    @Transactional
+    public EventResponse uploadPoster(Long eventId, String loginId, MultipartFile file) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 행사입니다."));
+        if (!event.getOrganizer().getLoginId().equals(loginId)) {
+            throw new CustomException(HttpStatus.FORBIDDEN, "본인이 만든 행사만 수정할 수 있습니다.");
+        }
+        if (event.getPosterUrl() != null) s3Service.delete(event.getPosterUrl());
+        event.setPosterUrl(s3Service.upload(file));
+        return new EventResponse(event);
     }
 }

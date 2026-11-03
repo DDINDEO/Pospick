@@ -149,9 +149,11 @@ public class OrderService {
         List<OrderItem> items = orderItemRepository.findByOrder(order);
         for (OrderItem item : items) {
             Product product = item.getProduct();
-            product.setStockQuantity(product.getStockQuantity() + item.getQuantity()); // 재고 복구
+            product.setStockQuantity(product.getStockQuantity() + item.getQuantity());
         }
 
+        // OrderItem 먼저 삭제 후 Order 삭제 (FK 제약)
+        orderItemRepository.deleteAll(items);
         orderRepository.delete(order);
     }
 }

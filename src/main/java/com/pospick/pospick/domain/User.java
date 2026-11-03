@@ -21,5 +21,6 @@ public class User {
     private String name;
     private String email;
     private String role; // ORGANIZER, SELLER
+    private String accountNumber;
     private LocalDateTime createdAt = LocalDateTime.now();
 }

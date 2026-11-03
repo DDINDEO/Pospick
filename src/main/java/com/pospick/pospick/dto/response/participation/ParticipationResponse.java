@@ -20,6 +20,7 @@ public class ParticipationResponse {
 
     private final Long partId;
     private final Long eventId;
+    private final String eventTitle;
     private final String sellerName;
     private final String status;
     private final boolean collectSalesAgree;
@@ -32,6 +33,7 @@ public class ParticipationResponse {
     public ParticipationResponse(Participation participation) {
         this.partId = participation.getPartId();
         this.eventId = participation.getEvent().getEventId();
+        this.eventTitle = participation.getEvent().getTitle();
         this.sellerName = participation.getSeller().getName();
         this.status = participation.getStatus();
         this.collectSalesAgree = participation.isCollectSalesAgree();

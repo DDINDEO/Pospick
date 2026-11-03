@@ -62,6 +62,16 @@ public class ParticipationController {
     }
 
     /**
+     * 참가자 추방 (ORGANIZER 전용)
+     * DELETE /api/participations/{id}
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> remove(@PathVariable Long id) {
+        participationService.remove(id);
+        return ResponseEntity.ok("참가자가 추방되었습니다.");
+    }
+
+    /**
      * 내가 신청한 행사 목록 조회 (SELLER 마이페이지)
      * GET /api/participations/my
      * JWT 토큰에서 loginId 자동 추출 → 내 신청 목록 반환

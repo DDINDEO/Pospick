@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -70,8 +71,18 @@ public class EventController {
      * DELETE /api/events/{eventId}
      */
     @DeleteMapping("/{eventId}")
-    public ResponseEntity<String> deleteEvent(@PathVariable Long eventId) {
-        eventService.deleteEvent(eventId);
+    public ResponseEntity<String> deleteEvent(
+            @PathVariable Long eventId,
+            @AuthenticationPrincipal String loginId) {
+        eventService.deleteEvent(eventId, loginId);
         return ResponseEntity.ok("행사가 삭제됐습니다.");
+    }
+
+    @PostMapping("/{eventId}/poster")
+    public ResponseEntity<EventResponse> uploadPoster(
+            @PathVariable Long eventId,
+            @AuthenticationPrincipal String loginId,
+            @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(eventService.uploadPoster(eventId, loginId, file));
     }
 }

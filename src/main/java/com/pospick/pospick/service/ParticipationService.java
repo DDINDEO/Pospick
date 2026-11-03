@@ -6,9 +6,8 @@ import com.pospick.pospick.domain.User;
 import com.pospick.pospick.dto.request.participation.ParticipationRequest;
 import com.pospick.pospick.dto.response.participation.ParticipationResponse;
 import com.pospick.pospick.exception.CustomException;
-import com.pospick.pospick.repository.EventRepository;
-import com.pospick.pospick.repository.ParticipationRepository;
-import com.pospick.pospick.repository.UserRepository;
+import com.pospick.pospick.repository.*;
+import com.pospick.pospick.domain.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,9 @@ public class ParticipationService {
     private final ParticipationRepository participationRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ProductRepository productRepository;
 
     /**
      * 참가 신청
@@ -113,6 +115,28 @@ public class ParticipationService {
 
         participation.setStatus("REJECTED");
         return new ParticipationResponse(participation);
+    }
+
+    /**
+     * 참가자 추방 (ORGANIZER 전용)
+     * - 승인된 참가자를 행사에서 제거
+     */
+    @Transactional
+    public void remove(Long partId) {
+        Participation participation = participationRepository.findById(partId)
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 참가 신청입니다."));
+
+        // 연결된 주문 → 주문 아이템 삭제
+        List<Order> orders = orderRepository.findByParticipation(participation);
+        for (Order order : orders) {
+            orderItemRepository.deleteAll(orderItemRepository.findByOrder(order));
+        }
+        orderRepository.deleteAll(orders);
+
+        // 연결된 상품 삭제
+        productRepository.deleteAll(productRepository.findByParticipation(participation));
+
+        participationRepository.delete(participation);
     }
 
     /**
